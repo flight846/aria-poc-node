@@ -8,6 +8,7 @@ const router = express.Router();
 router
     .route('/')
     .get(authController.protectedRoute, caseController.getCasesBetweenYears)
+    .get(authController.protectedRoute, caseController.getCasesByCodes)
     .get(authController.protectedRoute, caseController.getAllCases)
     .post(authController.protectedRoute, caseController.createCase);
 

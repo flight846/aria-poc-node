@@ -10,24 +10,27 @@ const AppError = require('../utils/appError');
 
 // cases?from=YYYY&to=YYYY
 exports.getCasesBetweenYears = catchAsync(async (req, res, next) => {
-    const _case = await Case.find({
-        year: {
-            $gte: req.query.from,
-            $lt: req.query.to,
-        },
-    });
+    if (req.query.from && req.query.to) {
+        const _case = await Case.find({
+            year: {
+                $gte: req.query.from,
+                $lt: req.query.to,
+            },
+        });
 
-    res.status(200).json({
-        status: 'success',
-        results: _case.length,
-        data: {
-            cases: _case
-        },
-    });
+        res.status(200).json({
+            status: 'success',
+            results: _case.length,
+            data: {
+                cases: _case
+            },
+        });
+    } else {
+        return next();
+    }
 });
 
 exports.getAllCases = catchAsync(async (req, res, next) => {
-    // Execute Query
     const features = new APIFeatures(Case.find(), req.query)
         .filter()
         .sort()
@@ -100,11 +103,30 @@ exports.deleteCase = catchAsync(async (req, res, next) => {
     });
 });
 
-exports.getcodes = (req, res) => {
-    res.status(500).json({
-        status: 'error',
-        message: 'This route is not yet defined!'
-    });
-};
+exports.getCasesByCodes = catchAsync(async (req, res, next) => {
+    if (req.query.codes) {
+        const codes = req.query.codes.split(',');
+        const eleMatch = {};
+        codes.map(code => {
+            const iterator = { $all: code };
+            Object.assign(eleMatch, iterator);
+        });
+
+        const _case = await Case.find({
+            'charge.codes': {
+                $elemMatch: eleMatch
+            }
+        });
+        res.status(200).json({
+            status: 'success',
+            results: _case.length,
+            data: {
+                cases: _case
+            },
+        });
+    } else {
+        return next();
+    }
+});
 
 // Aggregation Pipeline below
