@@ -14,7 +14,7 @@ router
 
 router
     .route('/:id')
-    .get(authController.protectedRoute, caseController.getCase)
+    .get(authController.requireToken, caseController.getCase)
     .patch(authController.protectedRoute, caseController.updateCase)
     .delete(
         authController.protectedRoute,
