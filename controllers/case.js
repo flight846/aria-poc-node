@@ -1,7 +1,7 @@
 const Case = require('../models/caseModel');
 const APIFeatures = require('../utils/apiFeatures');
 const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
+const AppError = require('../utils/appError'); 
 
 // const tours = JSON.parse(
 //     fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
@@ -32,19 +32,19 @@ exports.getCasesBetweenYears = catchAsync(async (req, res, next) => {
 
 exports.getAllCases = catchAsync(async (req, res, next) => {
     const features = new APIFeatures(Case.find(), req.query)
-        .filter()
+        // .filter()
         .sort()
         .limitFields()
         .paginate();
-    const cases = await features.query;
+    const _cases = await features.query;
 
-    // Send Query
+    // SEND RESPONSE
     res.status(200).json({
         status: 'success',
-        results: cases.length,
+        results: _cases.length,
         data: {
-            cases
-        }
+            _cases,
+        },
     });
 });
 
